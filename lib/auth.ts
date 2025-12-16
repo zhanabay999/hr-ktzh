@@ -129,13 +129,3 @@ declare module 'next-auth' {
     }
   }
 }
-
-declare module 'next-auth/jwt' {
-  interface JWT {
-    id: string
-    employeeId: string
-    role: string
-    firstName: string
-    lastName: string
-  }
-}

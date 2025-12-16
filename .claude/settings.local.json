@@ -6,7 +6,12 @@
       "Bash(npm run dev:*)",
       "Bash(taskkill:*)",
       "Bash(npm run db:push:*)",
-      "Bash(npm run db:setup:*)"
+      "Bash(npm run db:setup:*)",
+      "Bash(git commit:*)",
+      "Bash(git config:*)",
+      "Bash(git push:*)",
+      "Bash(npm run build:*)",
+      "Bash(git add:*)"
     ]
   }
 }
