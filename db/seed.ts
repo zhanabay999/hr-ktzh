@@ -11,7 +11,7 @@ async function seed() {
   try {
     // Hash passwords
     const superAdminPassword = await bcrypt.hash('SuperAdmin123!', 12)
-    const hrSuperPassword = await bcrypt.hash('HRSuper123!', 12)
+    const hrSuperPassword = await bcrypt.hash('1111', 12)
 
     // Create Super Admin
     const [superAdmin] = await db
@@ -59,7 +59,7 @@ async function seed() {
     console.log('  Password: SuperAdmin123!')
     console.log('\nHR Super Admins (5 users):')
     console.log('  Employee IDs: 0000002 - 0000006')
-    console.log('  Password: HRSuper123!')
+    console.log('  Password: 1111')
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
   } catch (error) {
     console.error('❌ Error seeding database:', error)

@@ -63,11 +63,11 @@ VALUES (
 ON CONFLICT (employee_id) DO NOTHING;
 
 -- Добавление 5 HR Super Admins
--- Пароль: HRSuper123!
+-- Пароль: 1111
 INSERT INTO users (employee_id, password, first_name, last_name, email, role, created_by, is_active)
 SELECT
     LPAD(i::TEXT, 7, '0'),
-    '$2a$12$B43t9RLIXq2XL8fUsAw52esrBHvDjYcLRD9dEJJk7iGVv1ePs3BIu',
+    '$2a$12$3UZHimHnDB4rSLWkar2kdOAU503Wll9UG4ys3HCdRTniVZNhYRQRW',
     'HR Super',
     'Admin ' || (i - 1)::TEXT,
     'hrsuper' || (i - 1)::TEXT || '@hr-ktzh.kz',

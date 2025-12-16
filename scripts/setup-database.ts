@@ -100,7 +100,7 @@ async function setupDatabase() {
       INSERT INTO users (employee_id, password, first_name, last_name, email, role, created_by, is_active)
       SELECT
         LPAD(i::TEXT, 7, '0'),
-        '$2a$12$B43t9RLIXq2XL8fUsAw52esrBHvDjYcLRD9dEJJk7iGVv1ePs3BIu',
+        '$2a$12$3UZHimHnDB4rSLWkar2kdOAU503Wll9UG4ys3HCdRTniVZNhYRQRW',
         'HR Super',
         'Admin ' || (i - 1)::TEXT,
         'hrsuper' || (i - 1)::TEXT || '@hr-ktzh.kz',
@@ -144,7 +144,7 @@ async function setupDatabase() {
     console.log('  Пароль: 151192')
     console.log('\nHR Super Admins:')
     console.log('  Табельные номера: 0000002 - 0000006')
-    console.log('  Пароль: HRSuper123!')
+    console.log('  Пароль: 1111')
     console.log('━'.repeat(60))
     console.log('\n🌐 Откройте: http://localhost:3000/login')
     console.log('\n')
