@@ -1,0 +1,46 @@
+import { auth } from '@/lib/auth'
+import { redirect } from 'next/navigation'
+import { canManageEmployees } from '@/lib/permissions'
+import { Role } from '@/db/schema'
+import { Card } from '@/components/ui/Card'
+import Link from 'next/link'
+import { Button } from '@/components/ui/Button'
+import { UsersList } from '@/components/admin/UsersList'
+
+export default async function UsersPage() {
+  const session = await auth()
+
+  if (!session) {
+    redirect('/login')
+  }
+
+  const userRole = session.user.role as Role
+
+  if (!canManageEmployees(userRole)) {
+    redirect('/dashboard')
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold text-gray-900">Управление пользователями</h1>
+        <div className="flex space-x-3">
+          <Link href="/admin/users/import">
+            <Button variant="secondary">Импорт из Excel</Button>
+          </Link>
+          <Link href="/admin/users/new">
+            <Button>Добавить пользователя</Button>
+          </Link>
+        </div>
+      </div>
+
+      <Card>
+        <div className="text-sm text-gray-500 mb-4">
+          Список всех пользователей в системе
+        </div>
+
+        <UsersList />
+      </Card>
+    </div>
+  )
+}
