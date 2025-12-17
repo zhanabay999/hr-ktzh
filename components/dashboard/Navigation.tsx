@@ -53,7 +53,10 @@ export function Navigation({ user }: NavigationProps) {
                 <NavLink href="/dashboard">Главная</NavLink>
                 <NavLink href="/admin/users">Пользователи</NavLink>
                 {canCreateCourses(user.role) && (
-                  <NavLink href="/admin/courses">Курсы</NavLink>
+                  <>
+                    <NavLink href="/admin/providers">Провайдеры</NavLink>
+                    <NavLink href="/admin/courses">Курсы</NavLink>
+                  </>
                 )}
               </div>
             )}

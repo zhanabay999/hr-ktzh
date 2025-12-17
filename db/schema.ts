@@ -32,12 +32,27 @@ export const users = pgTable('users', {
   updatedAt: timestamp('updated_at').notNull().defaultNow()
 })
 
+// Providers table (course providers)
+export const providers = pgTable('providers', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  name: varchar('name', { length: 255 }).notNull().unique(),
+  description: text('description'),
+  website: varchar('website', { length: 500 }),
+  contactEmail: varchar('contact_email', { length: 255 }),
+  contactPhone: varchar('contact_phone', { length: 50 }),
+  isActive: boolean('is_active').notNull().default(true),
+  createdBy: uuid('created_by').notNull(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow()
+})
+
 // Courses table
 export const courses = pgTable('courses', {
   id: uuid('id').primaryKey().defaultRandom(),
   title: varchar('title', { length: 255 }).notNull(),
   description: text('description'),
   content: text('content'),
+  providerId: uuid('provider_id'), // Связь с провайдером
   createdBy: uuid('created_by').notNull(),
   isActive: boolean('is_active').notNull().default(true),
   createdAt: timestamp('created_at').notNull().defaultNow(),
@@ -65,10 +80,22 @@ export const usersRelations = relations(users, ({ one, many }) => ({
   enrollments: many(enrollments)
 }))
 
+export const providersRelations = relations(providers, ({ one, many }) => ({
+  creator: one(users, {
+    fields: [providers.createdBy],
+    references: [users.id]
+  }),
+  courses: many(courses)
+}))
+
 export const coursesRelations = relations(courses, ({ one, many }) => ({
   creator: one(users, {
     fields: [courses.createdBy],
     references: [users.id]
+  }),
+  provider: one(providers, {
+    fields: [courses.providerId],
+    references: [providers.id]
   }),
   enrollments: many(enrollments)
 }))
@@ -87,6 +114,8 @@ export const enrollmentsRelations = relations(enrollments, ({ one }) => ({
 // Types
 export type User = typeof users.$inferSelect
 export type NewUser = typeof users.$inferInsert
+export type Provider = typeof providers.$inferSelect
+export type NewProvider = typeof providers.$inferInsert
 export type Course = typeof courses.$inferSelect
 export type NewCourse = typeof courses.$inferInsert
 export type Enrollment = typeof enrollments.$inferSelect
