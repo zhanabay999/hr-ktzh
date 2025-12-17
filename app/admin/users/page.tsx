@@ -5,7 +5,7 @@ import { Role } from '@/db/schema'
 import { Card } from '@/components/ui/Card'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
-import { UsersList } from '@/components/admin/UsersList'
+import { SmartUserTable } from '@/components/admin/SmartUserTable'
 
 export default async function UsersPage() {
   const session = await auth()
@@ -35,11 +35,11 @@ export default async function UsersPage() {
       </div>
 
       <Card>
-        <div className="text-sm text-gray-500 mb-4">
-          Список всех пользователей в системе
+        <div className="text-sm text-gray-600 mb-4 flex items-center justify-between">
+          <span>✨ Умная таблица пользователей с поиском, фильтрами и редактированием</span>
         </div>
 
-        <UsersList />
+        <SmartUserTable />
       </Card>
     </div>
   )
