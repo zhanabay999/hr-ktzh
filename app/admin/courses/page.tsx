@@ -5,7 +5,7 @@ import { Role } from '@/db/schema'
 import { Card } from '@/components/ui/Card'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
-import { CoursesList } from '@/components/admin/CoursesList'
+import { SmartCourseTable } from '@/components/admin/SmartCourseTable'
 
 export default async function CoursesPage() {
   const session = await auth()
@@ -42,11 +42,11 @@ export default async function CoursesPage() {
       </div>
 
       <Card>
-        <div className="text-sm text-gray-500 mb-4">
-          Список всех курсов в системе
+        <div className="text-sm text-gray-600 mb-4">
+          ✨ Умная таблица курсов с поиском, фильтрами и редактированием
         </div>
 
-        <CoursesList />
+        <SmartCourseTable />
       </Card>
     </div>
   )
