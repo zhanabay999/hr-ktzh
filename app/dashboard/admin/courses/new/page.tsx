@@ -23,7 +23,7 @@ export default async function NewCoursePage() {
     <div className="space-y-6">
       <div className="flex items-center space-x-4">
         <Link
-          href="/admin/courses"
+          href="/dashboard/admin/courses"
           className="text-gray-600 hover:text-gray-900"
         >
           ← Назад

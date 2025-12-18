@@ -64,7 +64,7 @@ export function CreateUserForm({ userRole }: CreateUserFormProps) {
 
       setSuccess(true)
       setTimeout(() => {
-        router.push('/admin/users')
+        router.push('/dashboard/admin/users')
         router.refresh()
       }, 1500)
     } catch (err) {

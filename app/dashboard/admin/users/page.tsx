@@ -25,10 +25,10 @@ export default async function UsersPage() {
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-gray-900">Управление пользователями</h1>
         <div className="flex space-x-3">
-          <Link href="/admin/users/import">
+          <Link href="/dashboard/admin/users/import">
             <Button variant="secondary">Импорт из Excel</Button>
           </Link>
-          <Link href="/admin/users/new">
+          <Link href="/dashboard/admin/users/new">
             <Button>Добавить пользователя</Button>
           </Link>
         </div>

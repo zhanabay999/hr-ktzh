@@ -17,6 +17,19 @@ export const enrollmentStatusEnum = pgEnum('enrollment_status', [
   'completed'
 ])
 
+export const trainingTypeEnum = pgEnum('training_type', [
+  'preparation',          // подготовка
+  'retraining',          // переподготовка
+  'professional_dev',    // повышение квалификации
+  'mandatory'            // обязательные
+])
+
+export const formatEnum = pgEnum('format', [
+  'online',              // онлайн
+  'offline',             // офлайн
+  'hybrid'               // гибридный
+])
+
 // Users table
 export const users = pgTable('users', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -49,9 +62,21 @@ export const providers = pgTable('providers', {
 // Courses table
 export const courses = pgTable('courses', {
   id: uuid('id').primaryKey().defaultRandom(),
-  title: varchar('title', { length: 255 }).notNull(),
+  // Основные поля
+  trainingType: trainingTypeEnum('training_type').notNull(), // Вид обучения
+  programDirection: varchar('program_direction', { length: 255 }).notNull(), // Направление программы
+  trainingName: varchar('training_name', { length: 500 }).notNull(), // Наименование обучающего мероприятия
+  duration: varchar('duration', { length: 100 }).notNull(), // Продолжительность обучения
+  format: formatEnum('format').notNull(), // Формат
+  priceWithoutVAT: varchar('price_without_vat', { length: 50 }), // Стоимость без НДС
+  priceWithVAT: varchar('price_with_vat', { length: 50 }), // Стоимость с НДС
+
+  // Дополнительные поля (старые)
+  title: varchar('title', { length: 255 }), // deprecated, заменено на trainingName
   description: text('description'),
   content: text('content'),
+
+  // Связи
   providerId: uuid('provider_id'), // Связь с провайдером
   createdBy: uuid('created_by').notNull(),
   isActive: boolean('is_active').notNull().default(true),

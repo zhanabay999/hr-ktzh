@@ -1,23 +1,49 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
+
+type Provider = {
+  id: string
+  name: string
+  isActive: boolean
+}
 
 export function CreateCourseForm() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+  const [providers, setProviders] = useState<Provider[]>([])
 
   const [formData, setFormData] = useState({
-    title: '',
+    trainingType: '',
+    programDirection: '',
+    trainingName: '',
+    duration: '',
+    format: '',
+    priceWithoutVAT: '',
+    priceWithVAT: '',
+    providerId: '',
     description: '',
     content: ''
   })
 
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
+
+  // Загрузка списка провайдеров
+  useEffect(() => {
+    fetch('/api/providers')
+      .then(res => res.json())
+      .then(data => {
+        if (data.providers) {
+          setProviders(data.providers.filter((p: Provider) => p.isActive))
+        }
+      })
+      .catch(err => console.error('Ошибка загрузки провайдеров:', err))
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -53,7 +79,7 @@ export function CreateCourseForm() {
 
       setSuccess(true)
       setTimeout(() => {
-        router.push('/admin/courses')
+        router.push('/dashboard/admin/courses')
         router.refresh()
       }, 1500)
     } catch (err) {
@@ -62,7 +88,7 @@ export function CreateCourseForm() {
     }
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
     // Clear field error when user starts typing
@@ -95,57 +121,196 @@ export function CreateCourseForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Вид обучения */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Вид обучения *
+        </label>
+        <select
+          name="trainingType"
+          value={formData.trainingType}
+          onChange={handleChange}
+          disabled={isLoading}
+          required
+          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+        >
+          <option value="">Выберите вид обучения</option>
+          <option value="preparation">Подготовка</option>
+          <option value="retraining">Переподготовка</option>
+          <option value="professional_dev">Повышение квалификации</option>
+          <option value="mandatory">Обязательные</option>
+        </select>
+        {fieldErrors.trainingType && (
+          <p className="mt-1 text-sm text-red-600">{fieldErrors.trainingType}</p>
+        )}
+      </div>
+
+      {/* Направление программы */}
       <div>
         <Input
-          label="Название курса *"
-          name="title"
+          label="Направление программы *"
+          name="programDirection"
           type="text"
-          value={formData.title}
+          value={formData.programDirection}
           onChange={handleChange}
-          error={fieldErrors.title}
-          placeholder="Введение в HR-менеджмент"
+          error={fieldErrors.programDirection}
+          placeholder="Например: HR-менеджмент, Финансы, IT"
           disabled={isLoading}
           required
         />
       </div>
 
+      {/* Наименование обучающего мероприятия */}
+      <div>
+        <Input
+          label="Наименование обучающего мероприятия *"
+          name="trainingName"
+          type="text"
+          value={formData.trainingName}
+          onChange={handleChange}
+          error={fieldErrors.trainingName}
+          placeholder="Полное название курса или мероприятия"
+          disabled={isLoading}
+          required
+        />
+      </div>
+
+      {/* Провайдер */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Описание
+          Провайдер курса
         </label>
-        <textarea
-          name="description"
-          value={formData.description}
+        <select
+          name="providerId"
+          value={formData.providerId}
           onChange={handleChange}
-          placeholder="Краткое описание курса..."
           disabled={isLoading}
-          rows={3}
           className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
-        />
-        {fieldErrors.description && (
-          <p className="mt-1 text-sm text-red-600">{fieldErrors.description}</p>
+        >
+          <option value="">Не указан</option>
+          {providers.map(provider => (
+            <option key={provider.id} value={provider.id}>
+              {provider.name}
+            </option>
+          ))}
+        </select>
+        {fieldErrors.providerId && (
+          <p className="mt-1 text-sm text-red-600">{fieldErrors.providerId}</p>
         )}
       </div>
 
+      {/* Продолжительность обучения */}
+      <div>
+        <Input
+          label="Продолжительность обучения *"
+          name="duration"
+          type="text"
+          value={formData.duration}
+          onChange={handleChange}
+          error={fieldErrors.duration}
+          placeholder="Например: 40 часов, 2 недели, 3 месяца"
+          disabled={isLoading}
+          required
+        />
+      </div>
+
+      {/* Формат */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Содержание курса
+          Формат *
         </label>
-        <textarea
-          name="content"
-          value={formData.content}
+        <select
+          name="format"
+          value={formData.format}
           onChange={handleChange}
-          placeholder="Полное содержание курса, материалы, задания..."
           disabled={isLoading}
-          rows={10}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed font-mono text-sm"
-        />
-        {fieldErrors.content && (
-          <p className="mt-1 text-sm text-red-600">{fieldErrors.content}</p>
+          required
+          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+        >
+          <option value="">Выберите формат</option>
+          <option value="online">Онлайн</option>
+          <option value="offline">Офлайн</option>
+          <option value="hybrid">Гибридный</option>
+        </select>
+        {fieldErrors.format && (
+          <p className="mt-1 text-sm text-red-600">{fieldErrors.format}</p>
         )}
-        <p className="mt-1 text-xs text-gray-500">
-          Вы можете использовать Markdown для форматирования
-        </p>
+      </div>
+
+      {/* Стоимость без НДС */}
+      <div>
+        <Input
+          label="Стоимость обучения без НДС"
+          name="priceWithoutVAT"
+          type="text"
+          value={formData.priceWithoutVAT}
+          onChange={handleChange}
+          error={fieldErrors.priceWithoutVAT}
+          placeholder="Например: 50000 ₸ или Бесплатно"
+          disabled={isLoading}
+        />
+      </div>
+
+      {/* Стоимость с НДС */}
+      <div>
+        <Input
+          label="Стоимость обучения с НДС"
+          name="priceWithVAT"
+          type="text"
+          value={formData.priceWithVAT}
+          onChange={handleChange}
+          error={fieldErrors.priceWithVAT}
+          placeholder="Например: 60000 ₸ или Бесплатно"
+          disabled={isLoading}
+        />
+      </div>
+
+      {/* Дополнительная информация */}
+      <div className="border-t pt-6">
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Дополнительная информация</h3>
+
+        <div className="space-y-4">
+          {/* Описание */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Описание
+            </label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              placeholder="Краткое описание курса..."
+              disabled={isLoading}
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+            />
+            {fieldErrors.description && (
+              <p className="mt-1 text-sm text-red-600">{fieldErrors.description}</p>
+            )}
+          </div>
+
+          {/* Содержание курса */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Содержание курса
+            </label>
+            <textarea
+              name="content"
+              value={formData.content}
+              onChange={handleChange}
+              placeholder="Полное содержание курса, материалы, задания..."
+              disabled={isLoading}
+              rows={8}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed font-mono text-sm"
+            />
+            {fieldErrors.content && (
+              <p className="mt-1 text-sm text-red-600">{fieldErrors.content}</p>
+            )}
+            <p className="mt-1 text-xs text-gray-500">
+              Вы можете использовать Markdown для форматирования
+            </p>
+          </div>
+        </div>
       </div>
 
       {error && (
@@ -154,7 +319,7 @@ export function CreateCourseForm() {
         </div>
       )}
 
-      <div className="flex justify-end space-x-3">
+      <div className="flex justify-end space-x-3 border-t pt-6">
         <Button
           type="button"
           variant="secondary"

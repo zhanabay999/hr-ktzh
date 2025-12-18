@@ -65,7 +65,7 @@ export function ExcelImportForm({ userRole }: ExcelImportFormProps) {
       // Если есть успешные импорты, через 3 секунды перенаправляем
       if (data.success > 0) {
         setTimeout(() => {
-          router.push('/admin/users')
+          router.push('/dashboard/admin/users')
           router.refresh()
         }, 3000)
       }
@@ -142,7 +142,7 @@ export function ExcelImportForm({ userRole }: ExcelImportFormProps) {
         )}
 
         <div className="flex justify-center">
-          <Button onClick={() => router.push('/admin/users')}>
+          <Button onClick={() => router.push('/dashboard/admin/users')}>
             Вернуться к списку пользователей
           </Button>
         </div>

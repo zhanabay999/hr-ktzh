@@ -1,9 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Table, TableHeader, TableHead, TableBody, TableRow, TableCell } from '@/components/ui/Table'
-import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
+import { Button } from '@/components/ui/Button'
 
 interface Provider {
   id: string
@@ -32,7 +31,7 @@ interface Course {
 type SortField = 'trainingName' | 'programDirection' | 'createdAt'
 type SortDirection = 'asc' | 'desc'
 
-export function SmartCourseTable() {
+export function CourseTableClient() {
   const [courses, setCourses] = useState<Course[]>([])
   const [providers, setProviders] = useState<Provider[]>([])
   const [filteredCourses, setFilteredCourses] = useState<Course[]>([])
@@ -139,18 +138,26 @@ export function SmartCourseTable() {
   const totalPages = Math.ceil(filteredCourses.length / itemsPerPage)
 
   if (loading) {
-    return <div className="text-center py-8 text-gray-500">Загрузка...</div>
+    return (
+      <div className="bg-white rounded-lg border border-gray-200 p-8">
+        <div className="text-center text-gray-500">Загрузка...</div>
+      </div>
+    )
   }
 
   if (error) {
-    return <div className="text-center py-8 text-red-600">{error}</div>
+    return (
+      <div className="bg-white rounded-lg border border-gray-200 p-8">
+        <div className="text-center text-red-600">{error}</div>
+      </div>
+    )
   }
 
   return (
-    <div className="space-y-4">
+    <div className="bg-white rounded-lg border border-gray-200">
       {/* Панель фильтров */}
-      <div className="bg-gray-50 p-4 rounded-lg space-y-3">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div className="p-4 border-b border-gray-200 bg-gray-50">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
           {/* Поиск */}
           <div>
             <Input
@@ -184,66 +191,78 @@ export function SmartCourseTable() {
 
       {/* Таблица */}
       <div className="overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableHead className="w-16">№</TableHead>
-            <TableHead
-              className="cursor-pointer hover:bg-gray-50 min-w-[200px]"
-              onClick={() => handleSort('programDirection')}
-            >
-              Направление программы {sortField === 'programDirection' && (sortDirection === 'asc' ? '↑' : '↓')}
-            </TableHead>
-            <TableHead
-              className="cursor-pointer hover:bg-gray-50 min-w-[300px]"
-              onClick={() => handleSort('trainingName')}
-            >
-              Наименование обучающего мероприятия {sortField === 'trainingName' && (sortDirection === 'asc' ? '↑' : '↓')}
-            </TableHead>
-            {/* Динамические столбцы для провайдеров */}
-            {providers.filter(p => p.isActive).map(provider => (
-              <TableHead key={provider.id} className="min-w-[150px] text-center">
-                {provider.name}
-              </TableHead>
-            ))}
-          </TableHeader>
-          <TableBody>
+        <table className="w-full">
+          <thead className="bg-gray-50 border-b border-gray-200">
+            <tr>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider w-16">
+                №
+              </th>
+              <th
+                className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 min-w-[200px]"
+                onClick={() => handleSort('programDirection')}
+              >
+                Направление программы {sortField === 'programDirection' && (sortDirection === 'asc' ? '↑' : '↓')}
+              </th>
+              <th
+                className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 min-w-[300px]"
+                onClick={() => handleSort('trainingName')}
+              >
+                Наименование обучающего мероприятия {sortField === 'trainingName' && (sortDirection === 'asc' ? '↑' : '↓')}
+              </th>
+              {/* Динамические столбцы для провайдеров */}
+              {providers.filter(p => p.isActive).map(provider => (
+                <th
+                  key={provider.id}
+                  className="px-4 py-3 text-center text-xs font-medium text-gray-700 uppercase tracking-wider min-w-[150px]"
+                >
+                  {provider.name}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
             {currentCourses.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={3 + providers.filter(p => p.isActive).length} className="text-center py-8 text-gray-500">
+              <tr>
+                <td
+                  colSpan={3 + providers.filter(p => p.isActive).length}
+                  className="px-4 py-8 text-center text-gray-500"
+                >
                   Курсы не найдены
-                </TableCell>
-              </TableRow>
+                </td>
+              </tr>
             ) : (
               currentCourses.map((course, index) => (
-                <TableRow key={course.id}>
+                <tr key={course.id} className="hover:bg-gray-50">
                   {/* № */}
-                  <TableCell className="text-center font-medium">
+                  <td className="px-4 py-3 text-center font-medium text-gray-900">
                     {indexOfFirstItem + index + 1}
-                  </TableCell>
+                  </td>
 
                   {/* Направление программы */}
-                  <TableCell className="font-medium">
+                  <td className="px-4 py-3 font-medium text-gray-900">
                     {course.programDirection || '-'}
-                  </TableCell>
+                  </td>
 
                   {/* Наименование */}
-                  <TableCell>
+                  <td className="px-4 py-3">
                     <div className="space-y-1">
-                      <div className="font-medium">{course.trainingName || course.title || '-'}</div>
+                      <div className="font-medium text-gray-900">
+                        {course.trainingName || course.title || '-'}
+                      </div>
                       {course.description && (
                         <div className="text-xs text-gray-500 line-clamp-2">
                           {course.description}
                         </div>
                       )}
                     </div>
-                  </TableCell>
+                  </td>
 
                   {/* Столбцы провайдеров */}
                   {providers.filter(p => p.isActive).map(provider => (
-                    <TableCell key={provider.id} className="text-center">
+                    <td key={provider.id} className="px-4 py-3 text-center">
                       {course.providerId === provider.id ? (
                         <div className="space-y-1">
-                          <div className="text-green-600 font-semibold">✓</div>
+                          <div className="text-green-600 font-semibold text-lg">✓</div>
                           {course.priceWithVAT && (
                             <div className="text-xs text-gray-900 font-medium">
                               {course.priceWithVAT}
@@ -258,18 +277,18 @@ export function SmartCourseTable() {
                       ) : (
                         <span className="text-gray-300">-</span>
                       )}
-                    </TableCell>
+                    </td>
                   ))}
-                </TableRow>
+                </tr>
               ))
             )}
-          </TableBody>
-        </Table>
+          </tbody>
+        </table>
       </div>
 
       {/* Пагинация */}
       {totalPages > 1 && (
-        <div className="flex justify-center items-center space-x-2 pt-4">
+        <div className="flex justify-center items-center space-x-2 p-4 border-t border-gray-200">
           <Button
             variant="secondary"
             onClick={() => setCurrentPage(p => Math.max(1, p - 1))}

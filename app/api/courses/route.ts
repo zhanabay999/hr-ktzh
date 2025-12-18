@@ -19,8 +19,17 @@ export async function GET() {
     const allCourses = await db
       .select({
         id: courses.id,
+        trainingType: courses.trainingType,
+        programDirection: courses.programDirection,
+        trainingName: courses.trainingName,
+        duration: courses.duration,
+        format: courses.format,
+        priceWithoutVAT: courses.priceWithoutVAT,
+        priceWithVAT: courses.priceWithVAT,
+        providerId: courses.providerId,
         title: courses.title,
         description: courses.description,
+        content: courses.content,
         isActive: courses.isActive,
         createdAt: courses.createdAt,
         createdBy: courses.createdBy
@@ -55,34 +64,35 @@ export async function POST(request: Request) {
 
     const body = await request.json()
 
-    // Validate input
-    const validatedData = createCourseSchema.safeParse(body)
+    // Validate required fields
+    const { trainingType, programDirection, trainingName, duration, format } = body
 
-    if (!validatedData.success) {
+    if (!trainingType || !programDirection || !trainingName || !duration || !format) {
       return NextResponse.json(
-        { error: 'Неверные данные', details: validatedData.error.errors },
+        { error: 'Заполните все обязательные поля' },
         { status: 400 }
       )
     }
-
-    const { title, description, content } = validatedData.data
 
     // Create course
     const [newCourse] = await db
       .insert(courses)
       .values({
-        title,
-        description: description || null,
-        content: content || null,
+        trainingType,
+        programDirection,
+        trainingName,
+        duration,
+        format,
+        priceWithoutVAT: body.priceWithoutVAT || null,
+        priceWithVAT: body.priceWithVAT || null,
+        providerId: body.providerId || null,
+        title: trainingName, // Для обратной совместимости
+        description: body.description || null,
+        content: body.content || null,
         createdBy: session.user.id,
         isActive: true
       })
-      .returning({
-        id: courses.id,
-        title: courses.title,
-        description: courses.description,
-        createdAt: courses.createdAt
-      })
+      .returning()
 
     return NextResponse.json(newCourse, { status: 201 })
   } catch (error) {

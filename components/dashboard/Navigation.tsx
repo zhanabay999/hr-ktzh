@@ -51,11 +51,11 @@ export function Navigation({ user }: NavigationProps) {
             {canAccessAdminPanel(user.role) && (
               <div className="flex space-x-2">
                 <NavLink href="/dashboard">Главная</NavLink>
-                <NavLink href="/admin/users">Пользователи</NavLink>
+                <NavLink href="/dashboard/admin/users">Пользователи</NavLink>
                 {canCreateCourses(user.role) && (
                   <>
-                    <NavLink href="/admin/providers">Провайдеры</NavLink>
-                    <NavLink href="/admin/courses">Курсы</NavLink>
+                    <NavLink href="/dashboard/admin/providers">Провайдеры</NavLink>
+                    <NavLink href="/dashboard/admin/courses">Курсы</NavLink>
                   </>
                 )}
               </div>

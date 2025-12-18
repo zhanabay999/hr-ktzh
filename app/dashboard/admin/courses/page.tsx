@@ -2,10 +2,9 @@ import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { canCreateCourses } from '@/lib/permissions'
 import { Role } from '@/db/schema'
-import { Card } from '@/components/ui/Card'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
-import { SmartCourseTable } from '@/components/admin/SmartCourseTable'
+import { CourseTableClient } from './CourseTableClient'
 
 export default async function CoursesPage() {
   const session = await auth()
@@ -36,18 +35,12 @@ export default async function CoursesPage() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-gray-900">Управление курсами</h1>
-        <Link href="/admin/courses/new">
+        <Link href="/dashboard/admin/courses/new">
           <Button>Создать курс</Button>
         </Link>
       </div>
 
-      <Card>
-        <div className="text-sm text-gray-600 mb-4">
-          ✨ Умная таблица курсов с поиском, фильтрами и редактированием
-        </div>
-
-        <SmartCourseTable />
-      </Card>
+      <CourseTableClient />
     </div>
   )
 }
